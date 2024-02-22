@@ -5,16 +5,17 @@ import { fetchAllUser } from '../../services/UserService';
 import ModalAddNewUser from '../ModalAddNewUser/ModalAddNewUser';
 import ModalEditUser from '../ModalEditUser/ModalEditUser';
 import _ from 'lodash';
+import ModalConfirm from '../ModalConfirm/ModalConfirm';
 
-const TableUsers = (props) => {
-  // const { show, handleClose } = props;
-
+const TableUsers = () => {
   const [listUsers, setListUsers] = useState([]);
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [show, setShow] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showModalConfirm, setShowModalConfirm] = useState(false);
   const [dataEditUser, setDataEditUser] = useState({});
+  const [dataDeleteUser, setDataDeleteUser] = useState({});
 
   const handleUpdateTable = (user) => {
     setListUsers([user, ...listUsers]);
@@ -24,7 +25,12 @@ const TableUsers = (props) => {
     let cloneListUsers = _.cloneDeep(listUsers);
     let index = listUsers.findIndex((item) => item.id === user.id);
     cloneListUsers[index].first_name = user.first_name;
-    console.log(listUsers, cloneListUsers);
+    setListUsers(cloneListUsers);
+  };
+
+  const handleUpdateDeleteUser = (user) => {
+    let cloneListUsers = _.cloneDeep(listUsers);
+    cloneListUsers = cloneListUsers.filter((item) => item.id !== user.id);
     setListUsers(cloneListUsers);
   };
 
@@ -34,6 +40,8 @@ const TableUsers = (props) => {
 
   const handleClose = () => {
     setShow(false);
+    setShowModalConfirm(false);
+    setShowEditModal(false);
   };
 
   const getUsers = async (page) => {
@@ -54,8 +62,9 @@ const TableUsers = (props) => {
     setShowEditModal(true);
   };
 
-  const handleCloseEditModal = () => {
-    setShowEditModal(false);
+  const handleConfirmModal = (user) => {
+    setShowModalConfirm(true);
+    setDataDeleteUser(user);
   };
 
   useEffect(() => {
@@ -96,7 +105,9 @@ const TableUsers = (props) => {
                     <button className="btn btn-warning mx-3" onClick={() => handleEdit(item)}>
                       Edit
                     </button>
-                    <button className="btn btn-danger">Delete</button>
+                    <button className="btn btn-danger" onClick={() => handleConfirmModal(item)}>
+                      Delete
+                    </button>
                   </td>
                 </tr>
               );
@@ -128,9 +139,15 @@ const TableUsers = (props) => {
       />
       <ModalEditUser
         showEditModal={showEditModal}
-        handleCloseEditModal={handleCloseEditModal}
+        handleClose={handleClose}
         dataEditUser={dataEditUser}
         handleUpdateEdit={handleUpdateEdit}
+      />
+      <ModalConfirm
+        showModalConfirm={showModalConfirm}
+        handleClose={handleClose}
+        dataDeleteUser={dataDeleteUser}
+        handleUpdateDeleteUser={handleUpdateDeleteUser}
       />
     </>
   );

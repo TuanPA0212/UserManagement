@@ -32,7 +32,7 @@ const ModalEditUser = (props) => {
   return (
     <Modal show={showEditModal} onHide={handleCloseEditModal}>
       <Modal.Header closeButton>
-        <Modal.Title>Modal Edit User</Modal.Title>
+        <Modal.Title>Edit User</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
