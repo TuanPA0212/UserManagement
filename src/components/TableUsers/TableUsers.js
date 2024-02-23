@@ -1,11 +1,13 @@
+import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
+import { FaSortAlphaDown, FaSortDown, FaSortUp, FaSortAlphaUp } from 'react-icons/fa';
 import ReactPaginate from 'react-paginate';
 import { fetchAllUser } from '../../services/UserService';
 import ModalAddNewUser from '../ModalAddNewUser/ModalAddNewUser';
-import ModalEditUser from '../ModalEditUser/ModalEditUser';
-import _ from 'lodash';
 import ModalConfirm from '../ModalConfirm/ModalConfirm';
+import ModalEditUser from '../ModalEditUser/ModalEditUser';
+import styles from './style.module.scss';
 
 const TableUsers = () => {
   const [listUsers, setListUsers] = useState([]);
@@ -16,6 +18,8 @@ const TableUsers = () => {
   const [showModalConfirm, setShowModalConfirm] = useState(false);
   const [dataEditUser, setDataEditUser] = useState({});
   const [dataDeleteUser, setDataDeleteUser] = useState({});
+  const [sortBy, setSortBy] = useState('');
+  const [sortField, setSortField] = useState('');
 
   const handleUpdateTable = (user) => {
     setListUsers([user, ...listUsers]);
@@ -67,6 +71,14 @@ const TableUsers = () => {
     setDataDeleteUser(user);
   };
 
+  const handleSort = (sortBy, sortField) => {
+    setSortBy(sortBy);
+    setSortField(sortField);
+    let cloneListUsers = _.cloneDeep(listUsers);
+    cloneListUsers = _.orderBy(cloneListUsers, sortField, sortBy);
+    setListUsers(cloneListUsers);
+  };
+
   useEffect(() => {
     getUsers(1);
   }, []);
@@ -84,10 +96,84 @@ const TableUsers = () => {
       <Table striped bordered hover size="sm">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Email</th>
-            <th>First Name</th>
-            <th>Last Name</th>
+            <th>
+              <div className={styles['sort-header']}>
+                <span className={styles['sort-header__title']}>ID</span>
+                <span className={styles['sort-header__icon']}>
+                  <FaSortUp
+                    className={styles['icon__sort']}
+                    onClick={() => {
+                      handleSort('desc', 'id');
+                    }}
+                  />
+                  <FaSortDown
+                    className={styles['icon__sort']}
+                    onClick={() => {
+                      handleSort('asc', 'id');
+                    }}
+                  />
+                </span>
+              </div>
+            </th>
+            <th>
+              <span>
+                <div className={styles['sort-header']}>
+                  <span className={styles['sort-header__title']}>Email</span>
+                  <span className={styles['sort-header__icon']}>
+                    <FaSortUp
+                      className={styles['icon__sort']}
+                      onClick={() => {
+                        handleSort('desc', 'email');
+                      }}
+                    />
+                    <FaSortDown
+                      className={styles['icon__sort']}
+                      onClick={() => {
+                        handleSort('asc', 'email');
+                      }}
+                    />
+                  </span>
+                </div>
+              </span>
+            </th>
+            <th>
+              <div className={styles['sort-header']}>
+                <span className={styles['sort-header__title']}>First Name</span>
+                <span className={styles['sort-header__icon']}>
+                  <FaSortUp
+                    className={styles['icon__sort']}
+                    onClick={() => {
+                      handleSort('desc', 'first_name');
+                    }}
+                  />
+                  <FaSortDown
+                    className={styles['icon__sort']}
+                    onClick={() => {
+                      handleSort('asc', 'first_name');
+                    }}
+                  />
+                </span>
+              </div>
+            </th>
+            <th>
+              <div className={styles['sort-header']}>
+                <span className={styles['sort-header__title']}>Last Name</span>
+                <span className={styles['sort-header__icon']}>
+                  <FaSortUp
+                    className={styles['icon__sort']}
+                    onClick={() => {
+                      handleSort('desc', 'last_name');
+                    }}
+                  />
+                  <FaSortDown
+                    className={styles['icon__sort']}
+                    onClick={() => {
+                      handleSort('asc', 'last_name');
+                    }}
+                  />
+                </span>
+              </div>
+            </th>
             <th>Action</th>
           </tr>
         </thead>

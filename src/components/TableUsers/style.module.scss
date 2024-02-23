@@ -1,3 +1,16 @@
 table {
   overflow-x: auto;
 }
+
+.sort-header {
+  display: flex;
+  justify-content: space-between;
+  &__icon {
+    .icon {
+      &__sort {
+        padding: 0 2px;
+        cursor: pointer;
+      }
+    }
+  }
+}
