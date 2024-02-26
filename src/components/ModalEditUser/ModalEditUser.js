@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { editUser } from '../../services/UserService';
 
 const ModalEditUser = (props) => {
-  const { showEditModal, handleCloseEditModal, dataEditUser, handleUpdateEdit } = props;
+  const { showEditModal, handleClose, dataEditUser, handleUpdateEdit } = props;
 
   const [name, setName] = useState('');
   const [job, setJob] = useState('');
@@ -16,7 +16,7 @@ const ModalEditUser = (props) => {
     if (resp && resp.updatedAt) {
       handleUpdateEdit({ first_name: name, id: dataEditUser.id });
       toast.success('Updated successfully');
-      handleCloseEditModal();
+      handleClose();
     } else {
       toast.error('Update failed');
     }
@@ -30,7 +30,7 @@ const ModalEditUser = (props) => {
   }, [dataEditUser]);
 
   return (
-    <Modal show={showEditModal} onHide={handleCloseEditModal}>
+    <Modal show={showEditModal} onHide={handleClose}>
       <Modal.Header closeButton>
         <Modal.Title>Edit User</Modal.Title>
       </Modal.Header>
@@ -59,7 +59,8 @@ const ModalEditUser = (props) => {
 
       <Modal.Footer>
         <Button variant="secondary">Close</Button>
-        <Button variant="primary" onClick={handleSave} onLoad={loading}>
+
+        <Button variant="primary" onClick={handleSave}>
           Save changes
         </Button>
       </Modal.Footer>

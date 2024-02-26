@@ -7,6 +7,7 @@ import { fetchAllUser } from '../../services/UserService';
 import ModalAddNewUser from '../ModalAddNewUser/ModalAddNewUser';
 import ModalConfirm from '../ModalConfirm/ModalConfirm';
 import ModalEditUser from '../ModalEditUser/ModalEditUser';
+import { debounce } from 'lodash';
 import styles from './style.module.scss';
 
 const TableUsers = () => {
@@ -79,6 +80,18 @@ const TableUsers = () => {
     setListUsers(cloneListUsers);
   };
 
+  const handleSearch = debounce((event) => {
+    let term = event.target.value;
+    console.log('term', term);
+    if (term) {
+      let cloneListUsers = _.cloneDeep(listUsers);
+      cloneListUsers = cloneListUsers.filter((item) => item.email.includes(term));
+      setListUsers(cloneListUsers);
+    } else {
+      getUsers(1);
+    }
+  }, 1000);
+
   useEffect(() => {
     getUsers(1);
   }, []);
@@ -92,6 +105,13 @@ const TableUsers = () => {
         <button className="btn btn-primary" onClick={handleAddUser}>
           Add user
         </button>
+      </div>
+      <div className="col-5">
+        <input
+          className={styles['search-by-email-input']}
+          placeholder="Search user by email..."
+          onChange={(event) => handleSearch(event)}
+        />
       </div>
       <Table striped bordered hover size="sm">
         <thead>
