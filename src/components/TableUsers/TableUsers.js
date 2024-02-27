@@ -1,14 +1,17 @@
-import _ from 'lodash';
+import _, { debounce } from 'lodash';
 import { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
-import { FaSortAlphaDown, FaSortDown, FaSortUp, FaSortAlphaUp } from 'react-icons/fa';
+import { FaSortDown, FaSortUp, FaPlusCircle, FaFileImport } from 'react-icons/fa';
 import ReactPaginate from 'react-paginate';
 import { fetchAllUser } from '../../services/UserService';
 import ModalAddNewUser from '../ModalAddNewUser/ModalAddNewUser';
 import ModalConfirm from '../ModalConfirm/ModalConfirm';
 import ModalEditUser from '../ModalEditUser/ModalEditUser';
-import { debounce } from 'lodash';
+import { CSVLink, CSVDownload } from 'react-csv';
+import { MdOutlineFileDownload } from 'react-icons/md';
+import Papa from 'papaparse';
 import styles from './style.module.scss';
+import { toast } from 'react-toastify';
 
 const TableUsers = () => {
   const [listUsers, setListUsers] = useState([]);
@@ -19,8 +22,7 @@ const TableUsers = () => {
   const [showModalConfirm, setShowModalConfirm] = useState(false);
   const [dataEditUser, setDataEditUser] = useState({});
   const [dataDeleteUser, setDataDeleteUser] = useState({});
-  const [sortBy, setSortBy] = useState('');
-  const [sortField, setSortField] = useState('');
+  const [dataExport, setDataExport] = useState([]);
 
   const handleUpdateTable = (user) => {
     setListUsers([user, ...listUsers]);
@@ -73,8 +75,6 @@ const TableUsers = () => {
   };
 
   const handleSort = (sortBy, sortField) => {
-    setSortBy(sortBy);
-    setSortField(sortField);
     let cloneListUsers = _.cloneDeep(listUsers);
     cloneListUsers = _.orderBy(cloneListUsers, sortField, sortBy);
     setListUsers(cloneListUsers);
@@ -82,7 +82,6 @@ const TableUsers = () => {
 
   const handleSearch = debounce((event) => {
     let term = event.target.value;
-    console.log('term', term);
     if (term) {
       let cloneListUsers = _.cloneDeep(listUsers);
       cloneListUsers = cloneListUsers.filter((item) => item.email.includes(term));
@@ -91,6 +90,43 @@ const TableUsers = () => {
       getUsers(1);
     }
   }, 1000);
+
+  const handleExport = (event, done) => {
+    let result = [];
+    if (listUsers && listUsers.length > 0) {
+      result.push(['Id', 'Email', 'First Name', 'Last Name']);
+      listUsers.map((item, index) => {
+        let arr = [];
+        arr[0] = item.id;
+        arr[1] = item.email;
+        arr[2] = item.first_name;
+        arr[3] = item.last_name;
+        result.push(arr);
+      });
+    }
+    setDataExport(result);
+    done();
+  };
+
+  const handleImport = (event) => {
+    if (event.target && event.target.files && event.target.files[0]) {
+      let file = event.target.files[0];
+
+      if (file.type !== 'text/csv') {
+        toast.warning('File must be csv');
+        return;
+      }
+      Papa.parse(file, {
+        header: true,
+        complete: function (responses) {
+          const filteredData = responses.data.filter((row) =>
+            Object.values(row).some((value) => value !== '')
+          );
+          setListUsers(filteredData);
+        },
+      });
+    }
+  };
 
   useEffect(() => {
     getUsers(1);
@@ -102,9 +138,29 @@ const TableUsers = () => {
         <span>
           <b>List Users:</b>
         </span>
-        <button className="btn btn-primary" onClick={handleAddUser}>
-          Add user
-        </button>
+        <div className="d-flex gap-2">
+          <label htmlFor="import" className="btn btn-warning">
+            <FaFileImport className="pe-1" />
+            Import
+          </label>
+          <input id="import" type="file" hidden onChange={(event) => handleImport(event)} />
+
+          <CSVLink
+            data={dataExport}
+            asyncOnClick={true}
+            onClick={handleExport}
+            filename={'users.csv'}
+            className="btn btn-success"
+          >
+            <MdOutlineFileDownload className="pe-1" />
+            Export
+          </CSVLink>
+
+          <button className="btn btn-primary" onClick={handleAddUser}>
+            <FaPlusCircle className="pe-1" />
+            Add user
+          </button>
+        </div>
       </div>
       <div className="col-5">
         <input
