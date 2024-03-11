@@ -1,0 +1,55 @@
+.login-container {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+
+  &__title {
+    font-size: 26px;
+    font-weight: 600;
+    padding-top: 30px;
+    text-align: center;
+  }
+  &__text {
+    font-weight: 600;
+  }
+  &__go-back {
+    text-align: center;
+    font-weight: 600;
+  }
+  &__input-password {
+    position: relative;
+    .input-password {
+      &__icon {
+        position: absolute;
+        top: 16px;
+        right: 10px;
+        cursor: pointer;
+      }
+    }
+  }
+  input {
+    border-radius: 5px;
+    outline: none;
+    padding: 10px 5px;
+    background-color: #1618230f;
+    border: solid 1px #dedede;
+    width: 100%;
+
+    &:hover {
+      background-color: #dedede;
+    }
+  }
+  button {
+    border-radius: 5px;
+    margin-top: 5px;
+    padding: 10px 5px;
+    border: solid 1px #dedede;
+  }
+  &__active {
+    background-color: #fe2c55;
+  }
+  button[disabled='disabled'],
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
