@@ -8,6 +8,7 @@ import { Route, Routes } from 'react-router-dom';
 import Login from './components/Login/Login';
 import { useContext, useEffect } from 'react';
 import { UserContext } from './context/UserContext';
+import AppRoutes from './routes/AppRoutes';
 
 function App() {
   const { user, loginContext } = useContext(UserContext);
@@ -23,11 +24,7 @@ function App() {
       <div className="app-container">
         <Header />
         <Container>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/users" element={<TableUsers />} />
-            <Route path="/login" element={<Login />} />
-          </Routes>
+          <AppRoutes />
         </Container>
       </div>
       <ToastContainer
