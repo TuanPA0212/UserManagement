@@ -1,15 +1,18 @@
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { FaRegEyeSlash } from 'react-icons/fa';
 import { IoIosArrowRoundBack, IoIosEye } from 'react-icons/io';
 import { toast } from 'react-toastify';
 import { login } from '../../services/UserService';
 import styles from './style.module.scss';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { UserContext } from '../../context/UserContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { loginContext } = useContext(UserContext);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isShowPassword, setIsShowPassword] = useState(false);
@@ -28,7 +31,7 @@ const Login = () => {
     const resp = await login(email, password);
 
     if (resp && resp.token) {
-      localStorage.setItem('token', resp.token);
+      loginContext(email, resp.token);
       navigate('/');
     } else {
       if (resp && resp.status === 400) {
@@ -36,6 +39,10 @@ const Login = () => {
       }
     }
     setLoading(false);
+  };
+
+  const handleBack = () => {
+    navigate('/');
   };
 
   useEffect(() => {
@@ -83,7 +90,9 @@ const Login = () => {
       </button>
       <div className={`${styles['login-container__go-back']}`}>
         <IoIosArrowRoundBack />
-        Go back
+        <span onClick={handleBack} className={styles['go-back__text']}>
+          Go back
+        </span>
       </div>
     </div>
   );

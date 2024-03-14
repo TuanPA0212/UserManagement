@@ -6,8 +6,18 @@ import TableUsers from './components/TableUsers/TableUsers';
 import HomePage from './components/HomePage/HomePage';
 import { Route, Routes } from 'react-router-dom';
 import Login from './components/Login/Login';
+import { useContext, useEffect } from 'react';
+import { UserContext } from './context/UserContext';
 
 function App() {
+  const { user, loginContext } = useContext(UserContext);
+
+  useEffect(() => {
+    if (localStorage.getItem('token')) {
+      loginContext(localStorage.getItem('email'), localStorage.getItem('token'));
+    }
+  }, []);
+
   return (
     <>
       <div className="app-container">
