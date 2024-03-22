@@ -7,15 +7,19 @@ import 'react-toastify/dist/ReactToastify.css';
 import App from './App';
 import { UserProvider } from './context/UserContext';
 import reportWebVitals from './reportWebVitals';
+import store from './redux/store';
+import { Provider } from 'react-redux';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <UserProvider>
+  <Provider store={store}>
+    <React.StrictMode>
+      {/* <UserProvider> */}
       <BrowserRouter>
         <App />
       </BrowserRouter>
-    </UserProvider>
-  </React.StrictMode>,
+      {/* </UserProvider> */}
+    </React.StrictMode>
+  </Provider>,
   document.getElementById('root')
 );
 

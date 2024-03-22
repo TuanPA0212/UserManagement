@@ -1,21 +1,29 @@
+import { useEffect } from 'react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import logo from '../asset/image/logo192.png';
+import Navbar from 'react-bootstrap/Navbar';
+import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { useContext, useEffect, useState } from 'react';
-import { UserContext } from '../context/UserContext';
+import logo from '../asset/image/logo192.png';
+import { handleLogoutRedux } from '../redux/action/userAction';
 
 const Header = (props) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout, user } = useContext(UserContext);
+  const dispatch = useDispatch();
+
+  const user = useSelector((state) => state.user.account);
 
   const handleLogout = () => {
-    logout();
-    navigate('/login');
+    dispatch(handleLogoutRedux());
   };
+
+  useEffect(() => {
+    if (user && user.auth === false) {
+      navigate('/login');
+    }
+  }, [user]);
 
   return (
     <>

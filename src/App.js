@@ -9,15 +9,27 @@ import Login from './components/Login/Login';
 import { useContext, useEffect } from 'react';
 import { UserContext } from './context/UserContext';
 import AppRoutes from './routes/AppRoutes';
+import { useDispatch, useSelector } from 'react-redux';
+import { handleRefresh } from './redux/action/userAction';
 
 function App() {
-  const { user, loginContext } = useContext(UserContext);
+  const dataUserRedux = useSelector((state) => state.user.account);
+
+  console.log('redux', dataUserRedux);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (localStorage.getItem('token')) {
-      loginContext(localStorage.getItem('email'), localStorage.getItem('token'));
-    }
+    dispatch(handleRefresh());
   }, []);
+
+  // const { user, loginContext } = useContext(UserContext);
+
+  // useEffect(() => {
+  //   if (localStorage.getItem('token')) {
+  //     loginContext(localStorage.getItem('email'), localStorage.getItem('token'));
+  //   }
+  // }, []);
 
   return (
     <>

@@ -9,36 +9,29 @@ import styles from './style.module.scss';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { handleLoginRedux } from '../../redux/action/userAction';
+
 const Login = () => {
   const navigate = useNavigate();
-  const { loginContext } = useContext(UserContext);
+  const dispatch = useDispatch();
+  const isLoading = useSelector((state) => state.user.isLoading);
+  const account = useSelector((state) => state.user.account);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isShowPassword, setIsShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const handleShowPassword = () => {
     setIsShowPassword(!isShowPassword);
   };
 
   const handleLogin = async () => {
-    setLoading(true);
     if (!email || !password) {
       toast.error('Email and password are required');
       return;
     }
-    const resp = await login(email, password);
-
-    if (resp && resp.token) {
-      loginContext(email, resp.token);
-      navigate('/');
-    } else {
-      if (resp && resp.status === 400) {
-        toast.error(resp.message);
-      }
-    }
-    setLoading(false);
+    dispatch(handleLoginRedux(email, password));
   };
 
   const handleBack = () => {
@@ -46,11 +39,10 @@ const Login = () => {
   };
 
   useEffect(() => {
-    let token = localStorage.getItem('token');
-    if (token) {
+    if (account && account.auth === true) {
       navigate('/');
     }
-  }, []);
+  }, [account]);
 
   return (
     <div className={`${styles['login-container']} col-12 col-sm-4 d-grid gap-3`}>
@@ -85,7 +77,7 @@ const Login = () => {
         disabled={email && password ? false : true}
         onClick={handleLogin}
       >
-        {loading && <FontAwesomeIcon icon={faSpinner} spin />}
+        {isLoading && <FontAwesomeIcon icon={faSpinner} spin />}
         Login
       </button>
       <div className={`${styles['login-container__go-back']}`}>
